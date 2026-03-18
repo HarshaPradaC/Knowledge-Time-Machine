@@ -11,7 +11,64 @@
   - Side panel for event details (shown on click)
   - Loading spinner during API fetch
 -->
-<div class="min-h-screen flex flex-col">
+<div class="min-h-screen flex flex-col relative bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] bg-fixed overflow-hidden">
+    
+    <!-- Animated background clockwork gears/rings and sparkles -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-30 z-0">
+        <!-- Sparkles -->
+        <div id="sparkles-container-timeline" class="sparkles-container"></div>
+        <script>
+            // Generate random sparkles that react to mouse movement
+            const timelineContainer = document.getElementById('sparkles-container-timeline');
+            const timelineSparkles = [];
+            for(let i=0; i<40; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                // Store base positions
+                const baseX = Math.random() * 100;
+                const baseY = Math.random() * 100;
+                sparkle.dataset.baseX = baseX;
+                sparkle.dataset.baseY = baseY;
+                
+                sparkle.style.left = baseX + '%';
+                sparkle.style.top = baseY + '%';
+                sparkle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                sparkle.style.animationDelay = (Math.random() * 5) + 's';
+                
+                timelineContainer.appendChild(sparkle);
+                timelineSparkles.push(sparkle);
+            }
+
+            // Mouse parallax/repel effect for sparkles
+            document.addEventListener('mousemove', (e) => {
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+
+                timelineSparkles.forEach(sparkle => {
+                    const rect = sparkle.getBoundingClientRect();
+                    const sparkleX = rect.left + rect.width / 2;
+                    const sparkleY = rect.top + rect.height / 2;
+
+                    const distX = mouseX - sparkleX;
+                    const distY = mouseY - sparkleY;
+                    const distance = Math.sqrt(distX * distX + distY * distY);
+
+                    // If mouse is close (within 150px), push the sparkle away slightly
+                    if (distance < 150) {
+                        const pushX = -(distX / distance) * 20;
+                        const pushY = -(distY / distance) * 20;
+                        sparkle.style.transform = `translate(${pushX}px, ${pushY}px)`;
+                    } else {
+                        // Return to normal
+                        sparkle.style.transform = `translate(0px, 0px)`;
+                    }
+                });
+            });
+        </script>
+        
+        <div class="gear gear-1"></div>
+        <div class="gear gear-2"></div>
+    </div>
 
     <!-- Top navigation bar -->
     <header class="sticky top-0 z-50 bg-dark-900/80 backdrop-blur-md border-b border-dark-700/50">

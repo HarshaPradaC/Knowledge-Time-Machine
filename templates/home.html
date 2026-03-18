@@ -8,39 +8,105 @@
   Home page: Large hero section with the app title
   and a prominent search bar for entering topics.
 -->
-<div class="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
+<div class="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] bg-fixed">
 
-    <!-- Animated background gradient orbs -->
-    <div class="absolute inset-0 overflow-hidden pointer-events-none">
-        <div class="orb orb-1"></div>
-        <div class="orb orb-2"></div>
-        <div class="orb orb-3"></div>
+    <!-- Animated background clockwork gears/rings and sparkles -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none opacity-40 z-0" id="bg-layer">
+        <!-- Sparkles -->
+        <div id="sparkles-container" class="sparkles-container"></div>
+        <script>
+            // Generate random sparkles that react to mouse movement
+            const container = document.getElementById('sparkles-container');
+            const sparkles = [];
+            for(let i=0; i<80; i++) {
+                const sparkle = document.createElement('div');
+                sparkle.className = 'sparkle';
+                // Store base positions
+                const baseX = Math.random() * 100;
+                const baseY = Math.random() * 100;
+                sparkle.dataset.baseX = baseX;
+                sparkle.dataset.baseY = baseY;
+                
+                sparkle.style.left = baseX + '%';
+                sparkle.style.top = baseY + '%';
+                sparkle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                sparkle.style.animationDelay = (Math.random() * 5) + 's';
+                
+                container.appendChild(sparkle);
+                sparkles.push(sparkle);
+            }
+
+            // Mouse parallax/repel effect for sparkles
+            document.addEventListener('mousemove', (e) => {
+                const mouseX = e.clientX;
+                const mouseY = e.clientY;
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+
+                sparkles.forEach(sparkle => {
+                    const rect = sparkle.getBoundingClientRect();
+                    const sparkleX = rect.left + rect.width / 2;
+                    const sparkleY = rect.top + rect.height / 2;
+
+                    const distX = mouseX - sparkleX;
+                    const distY = mouseY - sparkleY;
+                    const distance = Math.sqrt(distX * distX + distY * distY);
+
+                    // If mouse is close (within 150px), push the sparkle away slightly
+                    if (distance < 150) {
+                        const pushX = -(distX / distance) * 20;
+                        const pushY = -(distY / distance) * 20;
+                        sparkle.style.transform = `translate(${pushX}px, ${pushY}px)`;
+                    } else {
+                        // Return to normal
+                        sparkle.style.transform = `translate(0px, 0px)`;
+                    }
+                });
+            });
+        </script>
+        
+        <div class="gear gear-1"></div>
+        <div class="gear gear-2"></div>
+        <div class="gear gear-3"></div>
     </div>
 
     <!-- Hero content -->
-    <div class="relative z-10 text-center max-w-3xl mx-auto">
+    <div class="relative z-10 text-center max-w-3xl mx-auto mt-10">
 
-        <!-- Decorative icon -->
-        <div class="mb-8 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 backdrop-blur-sm">
-            <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
+        <!-- Interactive Watch Wheel Hero Graphic -->
+        <div class="mb-10 relative inline-flex items-center justify-center w-48 h-48 group cursor-pointer" title="The Wheel of Time">
+            <!-- Outer Ring -->
+            <div class="absolute inset-0 rounded-full border-[3px] border-dashed border-primary/60 shadow-[0_0_40px_rgba(212,175,55,0.4)] animate-[spin_20s_linear_infinite] group-hover:animate-[spin_5s_linear_infinite] transition-all duration-500"></div>
+            <!-- Middle Ring -->
+            <div class="absolute inset-3 rounded-full border-2 border-accent/70 animate-[spin_15s_linear_infinite_reverse] group-hover:animate-[spin_4s_linear_infinite_reverse] transition-all duration-500"></div>
+            <!-- Inner Gear Teeth -->
+            <div class="absolute inset-8 rounded-full border-[6px] border-dotted border-primary/40 animate-[spin_10s_linear_infinite] group-hover:animate-[spin_2s_linear_infinite] transition-all duration-500"></div>
+            <!-- Center Core -->
+            <div class="absolute w-12 h-12 bg-dark-800 rounded-full border-2 border-primary/80 z-10 flex items-center justify-center shadow-[inset_0_0_10px_rgba(212,175,55,0.8)] group-hover:shadow-[inset_0_0_20px_rgba(212,175,55,1),_0_0_30px_rgba(212,175,55,0.8)] transition-all duration-300">
+                <div class="w-2 h-2 bg-textLight rounded-full shadow-[0_0_10px_#fff]"></div>
+            </div>
+            <!-- Clock Hands (Static but decorative) -->
+            <div class="absolute w-full h-full flex justify-center items-center z-0 pointer-events-none transform -rotate-45">
+                <div class="w-1 h-16 bg-gradient-to-t from-transparent to-primary/80 transform origin-bottom -translate-y-8 absolute top-1/2 left-1/2 -ml-0.5"></div>
+            </div>
+            <div class="absolute w-full h-full flex justify-center items-center z-0 pointer-events-none transform rotate-[15deg]">
+                <div class="w-[2px] h-20 bg-gradient-to-t from-transparent to-accent/80 transform origin-bottom -translate-y-10 absolute top-1/2 left-1/2 -ml-[1px]"></div>
+            </div>
         </div>
 
         <!-- Title -->
-        <h1 class="text-5xl md:text-7xl font-black tracking-tight mb-4">
-            <span class="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+        <h1 class="text-5xl md:text-7xl font-heading font-black tracking-widest mb-4 uppercase drop-shadow-lg text-primary">
+            <span class="bg-gradient-to-br from-primary via-textLight to-accent bg-clip-text text-transparent">
                 Knowledge
             </span>
             <br>
-            <span class="text-textLight">
+            <span class="text-textLight opacity-90">
                 Time Machine
             </span>
         </h1>
 
         <!-- Subtitle -->
-        <p class="text-lg md:text-xl text-textMuted mb-12 max-w-xl mx-auto leading-relaxed">
+        <p class="text-lg md:text-xl text-textMuted mb-12 max-w-xl mx-auto leading-relaxed border-y border-primary/20 py-4 font-sans italic">
             Explore how ideas evolve across time. Search any concept and watch its history unfold.
         </p>
 

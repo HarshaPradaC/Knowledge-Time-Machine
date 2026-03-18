@@ -7,13 +7,13 @@
  */
 
 // ============================================
-// COLOR MAPPING FOR CATEGORIES
+// COLOR MAPPING FOR CATEGORIES (Ancient/Clockwork Theme)
 // ============================================
 const CATEGORY_COLORS = {
-    'Research':    '#a78bfa',  // Purple
-    'Industry':   '#22d3ee',  // Cyan
-    'Open Source': '#4ade80',  // Green
-    'Milestone':  '#facc15',  // Yellow
+    'Research':    '#d4af37',  // Gold
+    'Industry':    '#a0aab4',  // Iron / Steel
+    'Open Source': '#73a073',  // Oxidized copper
+    'Milestone':   '#b87333',  // Copper
 };
 
 // ============================================
@@ -64,17 +64,50 @@ function renderTimeline(events) {
     // Alternating y positions to avoid label overlap
     const yMid = height / 2;
 
-    // --- DRAW TIMELINE AXIS (horizontal line) ---
+    // --- DRAW WATCH-LIKE TIMELINE AXIS ---
+    // Main structural lines (like a track or band)
     svg.append('line')
         .attr('x1', 0)
         .attr('x2', width)
-        .attr('y1', yMid)
-        .attr('y2', yMid)
-        .attr('stroke', '#334155')
+        .attr('y1', yMid - 4)
+        .attr('y2', yMid - 4)
+        .attr('stroke', '#d4af37')
         .attr('stroke-width', 2)
-        .attr('stroke-dasharray', '6, 4');
+        .attr('opacity', 0.6);
 
-    // --- DRAW YEAR TICK MARKS ALONG AXIS ---
+    svg.append('line')
+        .attr('x1', 0)
+        .attr('x2', width)
+        .attr('y1', yMid + 4)
+        .attr('y2', yMid + 4)
+        .attr('stroke', '#d4af37')
+        .attr('stroke-width', 2)
+        .attr('opacity', 0.6);
+
+    // Fill between lines to make a solid band
+    svg.append('rect')
+        .attr('x', 0)
+        .attr('y', yMid - 4)
+        .attr('width', width)
+        .attr('height', 8)
+        .attr('fill', '#15120f')
+        .attr('opacity', 0.8);
+
+    // Add dense watch-like minute ticks for every year in range
+    const allYears = d3.range(minYear, maxYear + 1);
+    svg.selectAll('.minute-tick')
+        .data(allYears)
+        .join('line')
+        .attr('class', 'minute-tick')
+        .attr('x1', d => xScale(d))
+        .attr('x2', d => xScale(d))
+        .attr('y1', yMid - 4)
+        .attr('y2', d => d % 5 === 0 ? yMid + 8 : yMid + 4)
+        .attr('stroke', '#8c6432')
+        .attr('stroke-width', d => d % 5 === 0 ? 2 : 1)
+        .attr('opacity', 0.7);
+
+    // --- DRAW MAJOR YEAR TICK MARKS ALONG AXIS ---
     const tickYears = d3.range(
         Math.ceil(minYear / 5) * 5,
         maxYear,
@@ -88,14 +121,6 @@ function renderTimeline(events) {
         .each(function(year) {
             const g = d3.select(this);
             const x = xScale(year);
-
-            g.append('line')
-                .attr('x1', x)
-                .attr('x2', x)
-                .attr('y1', yMid - 6)
-                .attr('y2', yMid + 6)
-                .attr('stroke', '#475569')
-                .attr('stroke-width', 1);
 
             g.append('text')
                 .attr('x', x)
@@ -131,7 +156,7 @@ function renderTimeline(events) {
             .attr('class', 'connector-line')
             .attr('x1', x)
             .attr('x2', x)
-            .attr('y1', yMid)
+            .attr('y1', isAbove ? yMid - 4 : yMid + 4)
             .attr('y2', nodeY)
             .style('opacity', 0);
 
@@ -139,20 +164,32 @@ function renderTimeline(events) {
         g.append('circle')
             .attr('cx', x)
             .attr('cy', nodeY)
-            .attr('r', 16)
-            .attr('fill', CATEGORY_COLORS[d.category] || '#6366f1')
-            .attr('opacity', 0.15)
-            .style('opacity', 0);
+            .attr('r', 18)
+            .attr('fill', 'none')
+            .attr('stroke', CATEGORY_COLORS[d.category] || '#d4af37')
+            .attr('stroke-width', 1)
+            .attr('stroke-dasharray', '2, 2')
+            .style('opacity', 0)
+            .attr('class', 'gear-ring');
 
-        // Main event circle node
+        // Main event circle node (Metallic rivet look)
         g.append('circle')
             .attr('class', 'event-node')
             .attr('cx', x)
             .attr('cy', nodeY)
-            .attr('r', 8)
-            .attr('fill', CATEGORY_COLORS[d.category] || '#6366f1')
-            .attr('stroke', '#0f172a')
-            .attr('stroke-width', 2)
+            .attr('r', 10)
+            .attr('fill', '#15120f')
+            .attr('stroke', CATEGORY_COLORS[d.category] || '#d4af37')
+            .attr('stroke-width', 3)
+            .style('opacity', 0);
+            
+        // Inner rivet dot
+        g.append('circle')
+            .attr('class', 'event-node-center')
+            .attr('cx', x)
+            .attr('cy', nodeY)
+            .attr('r', 3)
+            .attr('fill', CATEGORY_COLORS[d.category] || '#d4af37')
             .style('opacity', 0);
 
         // Year label near node
@@ -182,23 +219,32 @@ function renderTimeline(events) {
 
         // --- HOVER EFFECTS ---
         g.on('mouseenter', function() {
+            // Spin the gear ring
+            d3.select(this).select('.gear-ring')
+                .transition().duration(2000).ease(d3.easeLinear)
+                .attrTween('transform', function() {
+                    return d3.interpolateString(`rotate(0, ${x}, ${nodeY})`, `rotate(360, ${x}, ${nodeY})`);
+                });
+                
             d3.select(this).selectAll('.event-node')
                 .transition().duration(200)
                 .attr('r', 12);
-            d3.select(this).selectAll('circle:nth-child(2)')
+            d3.select(this).select('.gear-ring')
                 .transition().duration(200)
-                .attr('r', 22)
-                .attr('opacity', 0.25);
+                .attr('r', 24)
+                .attr('stroke-width', 2);
         });
 
         g.on('mouseleave', function() {
+            d3.select(this).select('.gear-ring').interrupt(); // Stop spinning
+                
             d3.select(this).selectAll('.event-node')
                 .transition().duration(200)
-                .attr('r', 8);
-            d3.select(this).selectAll('circle:nth-child(2)')
+                .attr('r', 10);
+            d3.select(this).select('.gear-ring')
                 .transition().duration(200)
-                .attr('r', 16)
-                .attr('opacity', 0.15);
+                .attr('r', 18)
+                .attr('stroke-width', 1);
         });
     });
 
@@ -237,9 +283,8 @@ function renderTimeline(events) {
             svg.attr('transform', event.transform);
         });
 
-    d3.select('#timeline-svg-wrapper svg')
-        .call(zoom)
-        .on('dblclick.zoom', null); // Disable double-click zoom
+    const svgElement = d3.select('#timeline-svg-wrapper svg');
+    svgElement.call(zoom).on('dblclick.zoom', null); // Disable double-click zoom
 }
 
 

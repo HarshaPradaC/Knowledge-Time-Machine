@@ -9,33 +9,34 @@
     <!-- TailwindCSS via CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Configure Tailwind with our custom dark color palette
+        // Configure Tailwind with our custom modern-ancient color palette
         tailwind.config = {
             theme: {
                 extend: {
                     colors: {
                         dark: {
-                            900: '#0f172a',  // Main background
-                            800: '#1e293b',  // Card / panel background
-                            700: '#334155',  // Borders and subtle dividers
+                            900: '#0a0a0a',  // Deep void/obsidian
+                            800: '#15120f',  // Very dark sepia/brass shadow
+                            700: '#2a241c',  // Burnished dark brown
                         },
-                        primary: '#6366f1',     // Indigo — primary actions
-                        accent: '#06b6d4',      // Cyan — accents
-                        textLight: '#e2e8f0',   // Light text
-                        textMuted: '#94a3b8',   // Muted / secondary text
+                        primary: '#d4af37',     // Metallic Gold
+                        accent: '#c07c40',      // Copper / Bronze
+                        textLight: '#f3e5ab',   // Pale parchment / ivory
+                        textMuted: '#a89f91',   // Aged document text
                     },
                     fontFamily: {
-                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        sans: ['Lora', 'serif'],
+                        heading: ['Cinzel', 'serif'],
                     },
                 },
             },
         }
     </script>
 
-    <!-- Google Fonts — Inter for clean modern typography -->
+    <!-- Google Fonts — Cinzel and Lora for ancient/classic typography -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Lora:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
 
     <!-- D3.js for timeline visualization -->
     <script src="https://d3js.org/d3.v7.min.js"></script>
