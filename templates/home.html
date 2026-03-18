@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Knowledge Time Machine — Explore Ideas Across Time{% endblock %}
+
+{% block content %}
+<!-- 
+  Home page: Large hero section with the app title
+  and a prominent search bar for entering topics.
+-->
+<div class="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
+
+    <!-- Animated background gradient orbs -->
+    <div class="absolute inset-0 overflow-hidden pointer-events-none">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+
+    <!-- Hero content -->
+    <div class="relative z-10 text-center max-w-3xl mx-auto">
+
+        <!-- Decorative icon -->
+        <div class="mb-8 inline-flex items-center justify-center w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 backdrop-blur-sm">
+            <svg class="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </div>
+
+        <!-- Title -->
+        <h1 class="text-5xl md:text-7xl font-black tracking-tight mb-4">
+            <span class="bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent">
+                Knowledge
+            </span>
+            <br>
+            <span class="text-textLight">
+                Time Machine
+            </span>
+        </h1>
+
+        <!-- Subtitle -->
+        <p class="text-lg md:text-xl text-textMuted mb-12 max-w-xl mx-auto leading-relaxed">
+            Explore how ideas evolve across time. Search any concept and watch its history unfold.
+        </p>
+
+        <!-- Search form -->
+        <form id="search-form" action="/timeline/" method="GET" class="w-full max-w-2xl mx-auto">
+            <div class="relative group">
+                <!-- Search input with glowing border effect -->
+                <div class="absolute -inset-0.5 bg-gradient-to-r from-primary to-accent rounded-2xl opacity-30 group-hover:opacity-50 group-focus-within:opacity-70 blur transition duration-500"></div>
+                <div class="relative flex items-center bg-dark-800 rounded-2xl border border-dark-700">
+                    <!-- Search icon -->
+                    <svg class="w-5 h-5 text-textMuted ml-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                    </svg>
+                    <input
+                        id="search-input"
+                        type="text"
+                        name="topic"
+                        placeholder="Search any concept — e.g. Artificial Intelligence"
+                        required
+                        autocomplete="off"
+                        class="w-full bg-transparent text-textLight text-lg px-4 py-5 outline-none placeholder:text-textMuted/50"
+                    >
+                    <button
+                        type="submit"
+                        id="search-button"
+                        class="flex-shrink-0 bg-primary hover:bg-primary/80 text-white font-semibold px-6 py-3 mr-2 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95"
+                    >
+                        Explore
+                    </button>
+                </div>
+            </div>
+        </form>
+
+        <!-- Example topics -->
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <span class="text-textMuted text-sm">Try:</span>
+            <a href="/timeline/?topic=Artificial Intelligence" class="topic-chip">Artificial Intelligence</a>
+            <a href="/timeline/?topic=Quantum Computing" class="topic-chip">Quantum Computing</a>
+            <a href="/timeline/?topic=Blockchain" class="topic-chip">Blockchain</a>
+            <a href="/timeline/?topic=Machine Learning" class="topic-chip">Machine Learning</a>
+        </div>
+
+        {% if recent_topics %}
+        <!-- Recently searched topics -->
+        <div class="mt-12 pt-8 border-t border-dark-700/50">
+            <p class="text-textMuted text-sm mb-4">Recently explored</p>
+            <div class="flex flex-wrap items-center justify-center gap-2">
+                {% for t in recent_topics %}
+                <a href="/timeline/?topic={{ t.name }}" class="recent-chip">
+                    {{ t.name }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
